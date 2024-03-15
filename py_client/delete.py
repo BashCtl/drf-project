@@ -1,7 +1,7 @@
 import requests 
 
 
-endpoint = "http://localhost:8000/api/products/4/delete/"
+endpoint = "http://localhost:8000/api/products/6/delete/"
 
 
 
