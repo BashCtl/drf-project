@@ -4,24 +4,34 @@ from rest_framework.response import Response
 
 from django.shortcuts import get_object_or_404
 
-from api.mixins import StaffEditorPermissionMixin
+from api.mixins import StaffEditorPermissionMixin, UserQuerySetMixin
 
 from .models import Product
 from .serializers import ProductSerializer
 
 
-class ProductListCreateAPIView(StaffEditorPermissionMixin, generics.ListCreateAPIView):
+class ProductListCreateAPIView(
+    UserQuerySetMixin, StaffEditorPermissionMixin, generics.ListCreateAPIView
+):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    user_field = "owner"
 
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
         title = serializer.validated_data.get("title")
         content = serializer.validated_data.get("content")
-
         if content is None:
             content = title
-        serializer.save(content=content)
+        serializer.save(user=self.request.user, content=content)
+
+    # def get_queryset(self, *args, **kwargs):
+    #     qs = super().get_queryset(*args, **kwargs)
+    #     request = self.request
+    #     user = request.user
+    #     if not user.is_authenticated:
+    #         return Product.objects.none()
+    #     return qs.filter(user=request.user)
 
 
 class ProductDetailAPIView(StaffEditorPermissionMixin, generics.RetrieveAPIView):
