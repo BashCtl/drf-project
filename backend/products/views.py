@@ -15,7 +15,7 @@ class ProductListCreateAPIView(
 ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    user_field = "owner"
+    # user_field = "owner"
 
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
